@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Cup Reduction Awareness Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 500px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background-color: #f1f1f1;
+        }
+        .quick-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #e6f2ff;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #f0f8ff;
+            text-align: left;
+        }
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: #f1f1f1;
+        }
+        #userInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #sendButton {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            Paper Cup Reduction Awareness
+        </div>
+        <div class="quick-questions" id="quickQuestions"></div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Ask a question about paper cup reduction">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const qaData = [
+            {
+                questions: ["What are paper cups", "what is a paper cup"],
+                quickQuestion: "What are Paper Cups?",
+                answer: "Paper cups are disposable drinking containers made from paper and often lined with plastic to prevent leaking. They are commonly used for hot and cold beverages but contribute significantly to environmental waste."
+            },
+            {
+                questions: ["why are paper cups bad", "environmental impact"],
+                quickQuestion: "Environmental Impact",
+                answer: "Paper cups are harmful because they're rarely recycled, take up to 30 years to decompose, and require significant resources to produce. Most are lined with non-recyclable plastic, making them difficult to process in waste management systems."
+            },
+            {
+                questions: ["how to reduce paper cup usage", "alternatives"],
+                quickQuestion: "Reducing Paper Cup Usage",
+                answer: "Reduce paper cup usage by: 1) Using reusable mugs and tumblers, 2) Bringing your own container to coffee shops, 3) Choosing cafes that offer discounts for reusable cups, 4) Using ceramic mugs when dining in."
+            },
+            {
+                questions: ["how many paper cups are used annually", "paper cup statistics"],
+                quickQuestion: "Annual Paper Cup Usage",
+                answer: "Approximately 50 billion paper cups are used in the United States alone each year. This means around 1.6 million trees are cut down, and billions of cups end up in landfills annually."
+            },
+            {
+                questions: ["what are reusable alternatives", "alternatives to paper cups"],
+                quickQuestion: "Reusable Alternatives",
+                answer: "Great alternatives include: 1) Stainless steel tumblers, 2) Glass mason jars, 3) Ceramic travel mugs, 4) Silicone collapsible cups, 5) Bamboo fiber cups, 6) Insulated metal bottles."
+            }
+        ];
+
+        const welcomeMessage = "Welcome! I'm here to help you learn about reducing paper cup usage. Ask me anything!";
+        
+        function addMessage(message, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(isUser ? 'user-message' : 'bot-message');
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function findAnswer(userInput) {
+            const lowerInput = userInput.toLowerCase();
+            const matchedQA = qaData.find(qa => 
+                qa.questions.some(q => lowerInput.includes(q))
+            );
+            return matchedQA ? matchedQA.answer : "I'm not sure about that. Could you rephrase or ask another question about paper cup reduction?";
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message) {
+                addMessage(message, true);
+                const response = findAnswer(message);
+                setTimeout(() => addMessage(response), 500);
+                userInput.value = '';
+            }
+        }
+
+        function createQuickQuestionButtons() {
+            const quickQuestionsContainer = document.getElementById('quickQuestions');
+            qaData.forEach(qa => {
+                const button = document.createElement('button');
+                button.classList.add('quick-btn');
+                button.textContent = qa.quickQuestion;
+                button.onclick = () => {
+                    addMessage(qa.quickQuestion, true);
+                    setTimeout(() => addMessage(qa.answer), 500);
+                };
+                quickQuestionsContainer.appendChild(button);
+            });
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        createQuickQuestionButtons();
+        addMessage(welcomeMessage);
+    </script>
+</body>
+</html>
